@@ -1,5 +1,7 @@
 *.gem
 *.rbc
+*.osm
+*.pbf
 .bundle
 .config
 coverage
