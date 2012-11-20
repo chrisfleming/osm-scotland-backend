@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 
   require 'geo_ruby'
   require 'OSM/StreamParser'
@@ -34,7 +35,7 @@
   cb = MyCallbacks.new
 
 
-parser = OSM::StreamParser.new(:filename => 'lewis_harris.osm', :callbacks => cb, :db => db)
+parser = OSM::StreamParser.new(:filename => 'test-data/edinburgh.osm', :callbacks => cb, :db => db)
 parser.parse
 
 
