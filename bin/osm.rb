@@ -3,6 +3,8 @@
   require 'geo_ruby'
   require 'OSM/StreamParser'
   require 'OSM/Database'
+  require 'json'
+  require 'net/http'
 
   class MyCallbacks < OSM::Callbacks
     attr :ndc
@@ -34,6 +36,7 @@
   db = OSM::Database.new
   cb = MyCallbacks.new
 
+uri = URI.parse("http://localhost:3000/statistics/new.json")
 
 parser = OSM::StreamParser.new(:filename => 'uddingston.osm', :callbacks => cb, :db => db)
 parser.parse
@@ -61,6 +64,9 @@ users = Hash.new
 bike_shop_count = 0
 named_ways = 0
 
+counts = Hash.new() 
+lengths = Hash.new()
+
 
 tlist = File.open("time.txt", "w")
 
@@ -68,7 +74,7 @@ db.nodes.each do |n|
   named_nodes +=1 if n[1].tags.has_key? 'name'
     
   places_output = places_output + "#{n[0]}: #{n[1].tags}\n"  if n[1].tags.has_key? 'place'
-  bike_shop_count =+ 1 if n[1].tags.has_key? 'bicycle'
+  counts["Bike Shops"] =+ 1 if n[1].tags.has_key? 'bicycle'
    users[n[1].user] = 1 
  #  users.has_key? n[1].user ? users[n[1].user] = users[n[1].user] + 1 : users[n[1].user] = 1
 
@@ -124,11 +130,19 @@ print "#{boundary_output}\n\n"
 
 puts length
 
+counts["Users"] = users.length
 print "User count: #{users.length} \n"
 
 
 highway_l.keys.each do |h|
   print "      #{h}: #{highway_l[h]} \n"
+  r = Hash.new()
+  r["name"] = h
+  r["value"] = highway_l[h]
+  r["date"]  = '2012-11-24'
+  r["place_id"] = 0
+
+  response = Net::HTTP.post_form(uri, r.to_json)
 end
 
 print "cycleable: #{cycleable} \n"
@@ -136,3 +150,8 @@ print "names_nodes: #{named_nodes}\n"
 print "named_ways: #{named_ways}\n"
 
 print "bike shopes #{bike_shop_count}\n" 
+
+File.open("scotland.json","w") do |f|
+  f.write(counts.to_json)
+end
+
