@@ -58,7 +58,7 @@ named_nodes =0
 places_output = "" 
 boundary_output  = ""
 users = Hash.new
-
+bike_shop_count = 0
 named_ways = 0
 
 
@@ -68,7 +68,7 @@ db.nodes.each do |n|
   named_nodes +=1 if n[1].tags.has_key? 'name'
     
   places_output = places_output + "#{n[0]}: #{n[1].tags}\n"  if n[1].tags.has_key? 'place'
-
+  bike_shop_count =+ 1 if n[1].tags.has_key? 'bicycle'
    users[n[1].user] = 1 
  #  users.has_key? n[1].user ? users[n[1].user] = users[n[1].user] + 1 : users[n[1].user] = 1
 
@@ -135,3 +135,4 @@ print "cycleable: #{cycleable} \n"
 print "names_nodes: #{named_nodes}\n"
 print "named_ways: #{named_ways}\n"
 
+print "bike shopes #{bike_shop_count}\n" 
