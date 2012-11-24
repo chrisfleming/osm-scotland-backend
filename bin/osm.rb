@@ -35,7 +35,7 @@
   cb = MyCallbacks.new
 
 
-parser = OSM::StreamParser.new(:filename => 'edinburgh.osm', :callbacks => cb, :db => db)
+parser = OSM::StreamParser.new(:filename => 'uddingston.osm', :callbacks => cb, :db => db)
 parser.parse
 
 
