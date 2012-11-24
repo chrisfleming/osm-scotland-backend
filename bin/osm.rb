@@ -36,7 +36,7 @@
   db = OSM::Database.new
   cb = MyCallbacks.new
 
-uri = URI.parse("http://localhost:3000/statistics/new.json")
+uri = URI.parse("http://localhost:3000/statistics.json")
 
 parser = OSM::StreamParser.new(:filename => 'uddingston.osm', :callbacks => cb, :db => db)
 parser.parse
@@ -141,8 +141,20 @@ highway_l.keys.each do |h|
   r["value"] = highway_l[h]
   r["date"]  = '2012-11-24'
   r["place_id"] = 0
+ 
+  s = Hash.new()
+  s["stats"] = r
 
-  response = Net::HTTP.post_form(uri, r.to_json)
+  print s.to_json
+
+ #response = HTTP.post_form uri, s.to_json
+
+     req = Net::HTTP::Post.new("/statistics.json", initheader = {'Content-Type' =>'application/json'})
+       #   req.basic_auth @user, @pass
+     req.body = s.to_json
+     response = Net::HTTP.new("localhost", "3000").start {|http| http.request(req) }
+     puts "Response #{response.code} #{response.message}:
+          #{response.body}"
 end
 
 print "cycleable: #{cycleable} \n"
